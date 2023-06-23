@@ -2,6 +2,7 @@ import React from "react";
 import {
   ActivityIndicator,
   FlatList,
+  LayoutAnimation,
   ListRenderItem,
   StyleSheet,
   View,
@@ -18,10 +19,17 @@ const CoursesPage: React.FC = () => {
     dataStore.setIsFocused(isFocused);
   }, [isFocused]);
 
+  React.useEffect(() => {
+    // since the item keys are properly calculated,
+    // they will move with animation
+    LayoutAnimation.easeInEaseOut();
+  }, [dataStore.data]);
+
   return (
     <View style={styles.container}>
       {dataStore.isLoading && <ActivityIndicator size={"large"} />}
       <FlatList
+        key="CoursesFlatList"
         data={dataStore.data?.slice() || []}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
