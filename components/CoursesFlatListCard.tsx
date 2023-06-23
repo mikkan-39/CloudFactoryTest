@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  ListRenderItem,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
+import { StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 import { DARK_THEME, LIGHT_THEME } from "../styles/themesConstants";
 import { useMyTheme } from "../styles/themeProvider";
+import AnimatedFlasher from "./AnimatedFlasher";
 
 // Since my ThemedText is not a pure component, even though it's memoized,
 // it still generates and sends style object through the bridge every time.
@@ -28,6 +22,9 @@ const CoursesFlatListCard = (item: PoloniexCell) => {
 
   return (
     <View style={styles.card}>
+      {/* AnimatedFlasher looks very ✨cool✨ and render  
+      time of the component drops only around 30%, worth it */}
+      <AnimatedFlasher {...item} />
       <Text style={styles.label}>{item.direction}</Text>
       <Text style={styles.descriptionRow}>{JSON.stringify(item, null, 2)}</Text>
     </View>
@@ -39,6 +36,7 @@ export default React.memo(CoursesFlatListCard);
 // Boilerplate for the sake of optimization
 const baseStyles = {
   card: {
+    overflow: "hidden",
     padding: 20,
     paddingVertical: 16,
     marginBottom: 12,
