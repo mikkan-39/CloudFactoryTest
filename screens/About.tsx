@@ -1,10 +1,13 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import ThemedText from "../components/ThemedText";
 
 const AboutPage: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <ThemedText variant="T2">
+        Open up App.tsx to start working on your app!
+      </ThemedText>
     </View>
   );
 };
@@ -14,7 +17,6 @@ export default AboutPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },

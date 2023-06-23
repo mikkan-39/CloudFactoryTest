@@ -36,7 +36,7 @@ const getScreenOptions = (
   route: RouteProp<ParamListBase, string>,
   theme: Theme
 ): BottomTabNavigationOptions => ({
-  headerShown: false,
+  // headerShown: false,
   tabBarInactiveTintColor: theme.elevatedMedium,
   tabBarActiveTintColor: theme.accentColor,
   tabBarStyle: {

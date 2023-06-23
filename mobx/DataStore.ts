@@ -4,7 +4,7 @@ import axios, { AxiosError } from "axios";
 // minimal substitute for rtk-query, as we are using MobX
 // using the same isLoading & isFetching behavior
 class DataStore {
-  @observable data: any = null;
+  @observable data: null | PoloniexCell[] = null;
   @observable error: string | null = null;
   @observable isFetching: boolean = false;
   @observable isLoading: boolean = true;
@@ -43,12 +43,15 @@ class DataStore {
     });
 
     axios
-      .get("https://api.thecatapi.com/v1/images/search?limit=10", {
+      .get("https://poloniex.com/public?command=returnTicker", {
         cancelToken: this.cancelTokenSource.token,
       })
       .then((response) => {
         runInAction(() => {
-          this.data = response.status;
+          this.data = Object.entries(response.data).map((el) => ({
+            direction: el[0],
+            ...(el[1] as PoloniexExchangeDirection),
+          })) as PoloniexCell[];
           this.error = null;
           this.isFetching = false;
           this.isLoading = false;

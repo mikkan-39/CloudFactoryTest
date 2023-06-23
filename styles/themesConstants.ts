@@ -7,6 +7,8 @@ export interface StyleStorage {
 type RGB = `rgb(${number}, ${number}, ${number})`;
 type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`;
 type HEX = `#${string}`;
+
+// not using RN's ColorValue type as it conflicts with react-navigation
 type Color = RGB | RGBA | HEX;
 
 export interface Theme {
