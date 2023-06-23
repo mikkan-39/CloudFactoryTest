@@ -13,7 +13,7 @@ const CoursesPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {dataStore.isFetching && <ActivityIndicator size={"large"} />}
+      {dataStore.isLoading && <ActivityIndicator size={"large"} />}
       <Text>{dataStore.data}</Text>
     </View>
   );

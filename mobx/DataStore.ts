@@ -2,10 +2,13 @@ import { observable, action, runInAction, makeObservable } from "mobx";
 import axios, { AxiosError } from "axios";
 
 // minimal substitute for rtk-query, as we are using MobX
+// using the same isLoading & isFetching behavior
 class DataStore {
   @observable data: any = null;
   @observable error: string | null = null;
   @observable isFetching: boolean = false;
+  @observable isLoading: boolean = true;
+
   cancelTokenSource = axios.CancelToken.source();
   interval = null as NodeJS.Timer | null;
 
@@ -16,11 +19,11 @@ class DataStore {
   @action
   setIsFocused(isFocused: boolean) {
     if (isFocused) {
-      console.log("Started polling");
+      // console.log("DataStore.tsx:\tStarted polling");
       this.fetchData();
       this.interval = setInterval(this.fetchData, 5000);
     } else {
-      console.log("Stopped polling");
+      // console.log("DataStore.tsx:\tStopped polling");
       this.error = null;
       this.cancelTokenSource &&
         this.cancelTokenSource.cancel("Fetching stopped");
@@ -33,7 +36,7 @@ class DataStore {
     // this.isFetching &&
     //   this.cancelTokenSource.cancel("Cancelling older request");
 
-    console.log("Polling...");
+    // console.log("DataStore.tsx:\tPolling...");
 
     runInAction(() => {
       this.isFetching = true;
@@ -48,6 +51,7 @@ class DataStore {
           this.data = response.status;
           this.error = null;
           this.isFetching = false;
+          this.isLoading = false;
         });
       })
       .catch((error: AxiosError) => {
@@ -55,6 +59,7 @@ class DataStore {
           // this.data = null // optional
           this.error = error.message;
           this.isFetching = false;
+          this.isLoading = false;
         });
       });
   };
