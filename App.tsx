@@ -5,10 +5,14 @@ import ThemeProvider from "./styles/themeProvider";
 import dataStore from "./mobx/DataStore";
 import { Provider } from "mobx-react";
 import { Platform, UIManager } from "react-native";
+import { enableScreens } from "react-native-screens";
+
+enableScreens();
 
 if (Platform.OS === "android") {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
+    // LayoutAnimation on android can break with FlatLists
+    UIManager.setLayoutAnimationEnabledExperimental(false);
   }
 }
 

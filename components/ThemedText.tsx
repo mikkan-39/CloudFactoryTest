@@ -9,30 +9,27 @@ import { useMyTheme } from "../styles/themeProvider";
 
 interface CustomTextProps extends TextProps {
   variant?: "T0" | "T1" | "T2" | "T3";
-  secondary?: boolean;
-  thin?: boolean;
   color?: ColorValue;
+  secondary?: boolean;
+  multiline?: boolean;
 }
 
-// about 2x slower than native text, but very handy
+// about 2x slower than native text on re-render, but very handy
 const ThemedText = (props: CustomTextProps) => {
   const theme = useMyTheme();
   return (
     <NativeText
       maxFontSizeMultiplier={1.25}
-      adjustsFontSizeToFit={true}
-      numberOfLines={0}
+      adjustsFontSizeToFit={!props.multiline}
+      numberOfLines={props.multiline ? 0 : 1}
       {...props}
       // messy
       style={[
         props.variant && styles[props.variant],
         {
-          color:
-            props.color || !props.secondary
-              ? theme.textColor
-              : theme.textSecondaryColor,
+          color: props.color || theme.textColor,
         },
-        props.thin && styles.thin,
+        props.secondary && { color: theme.textSecondaryColor },
         props.style,
       ]}
     />
@@ -61,8 +58,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 24,
-  },
-  thin: {
-    fontWeight: "400",
   },
 });

@@ -1,15 +1,15 @@
 import { observable, action, runInAction, makeObservable } from "mobx";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 // minimal substitute for rtk-query, as we are using MobX
 // using the same isLoading & isFetching behavior
 class DataStore {
   @observable data: null | PoloniexCell[] = null;
-  @observable error: string | null = null;
+  @observable fetchingError: string | null = null;
   @observable isFetching: boolean = false;
   @observable isLoading: boolean = true;
-
-  cancelTokenSource = axios.CancelToken.source();
+  @observable renderError: string | null = null;
+  requestController: AbortController = new AbortController();
   interval = null as NodeJS.Timer | null;
 
   constructor() {
@@ -19,52 +19,57 @@ class DataStore {
   @action
   setIsFocused(isFocused: boolean) {
     if (isFocused) {
-      // console.log("DataStore.tsx:\tStarted polling");
+      this.requestController = new AbortController();
       this.fetchData();
       this.interval = setInterval(this.fetchData, 5000);
     } else {
-      // console.log("DataStore.tsx:\tStopped polling");
-      this.error = null;
-      this.cancelTokenSource &&
-        this.cancelTokenSource.cancel("Fetching stopped");
+      this.fetchingError = null;
+      this.requestController?.abort();
       this.interval && clearInterval(this.interval);
     }
   }
 
   fetchData = () => {
-    // cancel older requests, optional
     // this.isFetching &&
-    //   this.cancelTokenSource.cancel("Cancelling older request");
-
-    // console.log("DataStore.tsx:\tPolling...");
+    //   this.requestController.abort();
 
     runInAction(() => {
       this.isFetching = true;
     });
-
     axios
       .get("https://poloniex.com/public?command=returnTicker", {
-        cancelToken: this.cancelTokenSource.token,
+        signal: this.requestController.signal,
       })
-      .then((response) => {
-        runInAction(() => {
-          this.data = Object.entries(response.data).map((el) => ({
-            direction: el[0],
-            ...(el[1] as PoloniexExchangeDirection),
-          })) as PoloniexCell[];
-          this.error = null;
-          this.isFetching = false;
-          this.isLoading = false;
-        });
-      })
-      .catch((error: AxiosError) => {
-        runInAction(() => {
-          // this.data = null // optional
-          this.error = error.message;
-          this.isFetching = false;
-          this.isLoading = false;
-        });
-      });
+      .then(this.handleFetchSuccess)
+      .catch(this.handleFetchError);
+  };
+
+  @action
+  handleFetchSuccess = (response: AxiosResponse) => {
+    if (response.data.error) throw new AxiosError(response.data.error);
+
+    this.data = Object.entries(response.data).map((el) => ({
+      direction: el[0],
+      ...(el[1] as PoloniexExchangeDirection),
+    })) as PoloniexCell[];
+    this.fetchingError = null;
+    this.isFetching = false;
+    this.isLoading = false;
+  };
+
+  @action
+  handleFetchError = (error: AxiosError) => {
+    // this.data = null // optional
+    console.error(error);
+    this.fetchingError = error.message;
+    this.isFetching = false;
+    this.isLoading = false;
+  };
+
+  @action
+  setRenderError = (err: any) => {
+    console.error(err);
+    this.renderError = err.message;
   };
 }
 

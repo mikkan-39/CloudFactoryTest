@@ -39,8 +39,8 @@ const getScreenOptions = (
   // headerShown: false,
   tabBarInactiveTintColor: theme.elevatedMedium,
   tabBarActiveTintColor: theme.accentColor,
-  tabBarStyle: {
-    backgroundColor: theme.surfaceColor,
+  headerTitleStyle: {
+    fontSize: 22,
   },
   tabBarIcon: ({ color, size, focused }) => {
     return (

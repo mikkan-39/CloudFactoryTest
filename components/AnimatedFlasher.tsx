@@ -5,14 +5,15 @@ import React from "react";
 // Fills the parent view and flashes when props change.
 // very ✨cool✨
 
-const ANIMATION_OPACITY = 0.2;
+const ANIMATION_OPACITY = 0.1;
+
 const AnimatedFlasher = (props: any) => {
   const theme = useMyTheme();
   const flashValue = React.useRef(new Animated.Value(0)).current;
   React.useEffect(() => {
     Animated.timing(flashValue, {
       toValue: ANIMATION_OPACITY,
-      duration: 100,
+      duration: 300,
       useNativeDriver: true,
     }).start(() => {
       Animated.timing(flashValue, {
@@ -28,6 +29,7 @@ const AnimatedFlasher = (props: any) => {
       style={{
         opacity: flashValue,
         backgroundColor: theme.accentColor,
+        borderRadius: 16,
         ...StyleSheet.absoluteFillObject,
       }}
     />

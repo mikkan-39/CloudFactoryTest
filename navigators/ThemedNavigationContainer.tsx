@@ -10,6 +10,7 @@ const ThemedNavContainer = React.memo((props: any) => {
         ...DefaultTheme,
         dark: theme.isDark,
         colors: {
+          ...DefaultTheme.colors,
           primary: theme.accentColor,
           background: theme.backgroundColor,
           card: theme.surfaceColor,
